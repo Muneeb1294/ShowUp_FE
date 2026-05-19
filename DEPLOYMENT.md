@@ -14,7 +14,9 @@ Repo: **ShowUp_FE** — React + Vite app at repo root.
 
 | Variable | Value |
 |----------|--------|
-| `VITE_API_URL` | Railway API URL, e.g. `https://showup-api.up.railway.app` |
+| `VITE_API_URL` | `https://showupbe-production.up.railway.app` |
+
+Deployed app: https://show-up-fe.vercel.app
 
 Redeploy after changing `VITE_API_URL` (inlined at build time).
 
@@ -22,15 +24,17 @@ Redeploy after changing `VITE_API_URL` (inlined at build time).
 
 ## Local dev
 
+Set `VITE_API_URL` in `.env` (see `.env.example`), then:
+
 ```bash
 npm install
 npm run dev
 ```
 
-With the API on port 4000, Vite proxies `/api`. For a production-style build:
+For a production-style build:
 
 ```bash
-VITE_API_URL=http://localhost:4000 npm run build
+npm run build
 npm run preview
 ```
 

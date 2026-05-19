@@ -1,8 +1,9 @@
 import axios from "axios";
 import { getToken, clearToken } from "../lib/authStorage.js";
+import { getApiBaseUrl } from "../lib/apiBaseUrl.js";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "",
+  baseURL: getApiBaseUrl(),
   headers: { "Content-Type": "application/json" },
 });
 

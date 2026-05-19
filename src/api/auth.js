@@ -1,7 +1,8 @@
 import api, { getErrorMessage } from "./axios.js";
+import { getApiBaseUrl } from "../lib/apiBaseUrl.js";
 
 export function getGithubAuthUrl(redirectTo = "/") {
-  const base = import.meta.env.VITE_API_URL || "";
+  const base = getApiBaseUrl();
   const params = new URLSearchParams({ redirect: redirectTo });
   return `${base}/api/v1/auth/github?${params}`;
 }

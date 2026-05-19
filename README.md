@@ -9,7 +9,7 @@ cd client
 npm install
 ```
 
-Ensure the API is running on port 4000 (see `server/`).
+Copy `.env.example` to `.env` and set `VITE_API_URL` to your API base URL (no trailing slash).
 
 ## Development
 
@@ -17,7 +17,7 @@ Ensure the API is running on port 4000 (see `server/`).
 npm run dev
 ```
 
-Opens at http://localhost:5173. API requests to `/api/*` are proxied to `http://localhost:4000`.
+Opens at http://localhost:5173. API requests go to `VITE_API_URL` from `.env`.
 
 ## Routes
 
