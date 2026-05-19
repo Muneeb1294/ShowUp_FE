@@ -4,9 +4,9 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
-  if (!env.VITE_API_URL?.trim()) {
+  if (mode === "development" && !env.VITE_API_URL?.trim()) {
     throw new Error(
-      "VITE_API_URL is required. Set it in .env locally or in Vercel project settings before building."
+      "VITE_API_URL is required in .env for local dev (e.g. http://localhost:4000)."
     );
   }
 

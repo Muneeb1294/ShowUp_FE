@@ -10,22 +10,25 @@ Repo: **ShowUp_FE** — React + Vite app at repo root.
    - Output: `dist`
 3. No root subdirectory — project files are at repo root.
 
-## Environment (required on Vercel)
+## How production connects to Railway
 
-Vite inlines `VITE_*` variables **at build time**. If `VITE_API_URL` is missing, the deployed app cannot load data.
+`vercel.json` proxies browser requests from `https://show-up-fe.vercel.app/api/*` to `https://showupbe-production.up.railway.app/api/*`. The app uses same-origin `/api/...` URLs, so **no CORS issues** and **no `VITE_API_URL` required on Vercel**.
 
-1. Vercel → your project → **Settings** → **Environment Variables**
-2. Add:
+If you change the Railway domain, update the `destination` in `vercel.json` and redeploy.
 
-| Name | Value | Environments |
-|------|--------|----------------|
-| `VITE_API_URL` | `https://showupbe-production.up.railway.app` | Production, Preview, Development |
+## Local development
 
-3. **Deployments** → latest deployment → **⋯** → **Redeploy** (must rebuild after adding the variable)
+Copy `.env.example` to `.env`:
+
+```env
+VITE_API_URL=http://localhost:4000
+```
 
 Deployed app: https://show-up-fe.vercel.app
 
-To verify a build embedded the URL, search the built JS for `showupbe-production` (it should appear; if you only see `VITE_API_URL is required`, the variable was not set during build).
+## Optional: direct API URL on Vercel
+
+Instead of the proxy, you can set `VITE_API_URL=https://showupbe-production.up.railway.app` in Vercel env vars and redeploy. Ensure Railway has `FRONTEND_URL=https://show-up-fe.vercel.app` for CORS.
 
 `vercel.json` rewrites routes to `index.html` for React Router.
 
