@@ -12,20 +12,18 @@ export default function AuthForm({ redirectTo = "/" }) {
   const githubUrl = getGithubAuthUrl(redirectTo);
 
   return (
-    <div className="mx-auto max-w-sm rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <p className="mb-4 text-center text-sm text-slate-600">
-        Sign in with your GitHub account to submit projects, pin favorites, and comment.
+    <div className="panel-padded mx-auto max-w-sm">
+      <p className="mb-5 text-center text-sm leading-relaxed text-slate-600">
+        Sign in with your GitHub account to submit projects, pin favorites, and
+        comment.
       </p>
 
-      <a
-        href={githubUrl}
-        className="flex w-full items-center justify-center gap-2 rounded bg-slate-900 py-2.5 text-sm font-medium text-white hover:bg-slate-800"
-      >
+      <a href={githubUrl} className="btn-github">
         <GitHubIcon />
         Continue with GitHub
       </a>
 
-      <p className="mt-4 text-center text-xs text-slate-500">
+      <p className="mt-5 text-center text-xs leading-relaxed text-slate-500">
         New here? Your account is created automatically on first sign-in.
       </p>
     </div>

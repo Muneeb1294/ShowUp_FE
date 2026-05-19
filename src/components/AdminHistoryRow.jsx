@@ -27,8 +27,8 @@ export default function AdminHistoryRow({
   }
 
   return (
-    <tr className="border-b border-slate-100 align-top">
-      <td className="px-4 py-4">
+    <tr>
+      <td>
         <div className="flex items-start gap-3">
           <OwnerAvatar
             url={project.owner_avatar_url}
@@ -59,7 +59,7 @@ export default function AdminHistoryRow({
             {topics.map((t) => (
               <span
                 key={t}
-                className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600"
+                className="tag"
               >
                 {t}
               </span>
@@ -67,10 +67,10 @@ export default function AdminHistoryRow({
           </div>
         )}
       </td>
-      <td className="px-4 py-4 text-sm text-slate-600">
+      <td>
         {project.category_name || "—"}
       </td>
-      <td className="px-4 py-4 text-sm text-slate-600">
+      <td>
         {project.submitter_name ? (
           <div className="space-y-0.5">
             <div className="font-medium text-slate-800">
@@ -82,19 +82,15 @@ export default function AdminHistoryRow({
           <span className="text-slate-400">Unknown</span>
         )}
       </td>
-      <td className="px-4 py-4">
+      <td>
         <span
-          className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${
-            isApproved
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={isApproved ? "status-approved" : "status-rejected"}
         >
           {project.status}
         </span>
         <p className="mt-1 text-xs text-slate-400">{formatDate(reviewedAt)}</p>
       </td>
-      <td className="px-4 py-4 text-sm text-slate-600">
+      <td>
         {isApproved ? (
           <span className="text-slate-400">—</span>
         ) : (
@@ -103,7 +99,7 @@ export default function AdminHistoryRow({
           )
         )}
       </td>
-      <td className="px-4 py-4">
+      <td>
         <div className="flex flex-col gap-2">
           {isApproved && (
             <label className="flex cursor-pointer items-center gap-2 text-sm">
@@ -123,7 +119,7 @@ export default function AdminHistoryRow({
             type="button"
             disabled={busy}
             onClick={handleDelete}
-            className="rounded border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+            className="btn-secondary btn-sm text-red-700"
           >
             Delete
           </button>

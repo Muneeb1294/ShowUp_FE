@@ -26,39 +26,35 @@ export default function AdminLoginForm({ redirectTo = "/admin" }) {
   }
 
   return (
-    <div className="mx-auto max-w-sm rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <label className="block text-sm">
-          <span className="text-slate-600">Email</span>
+    <div className="panel-padded mx-auto max-w-sm">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <label className="block">
+          <span className="field-label">Email</span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             autoComplete="username"
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+            className="input"
           />
         </label>
-        <label className="block text-sm">
-          <span className="text-slate-600">Password</span>
+        <label className="block">
+          <span className="field-label">Password</span>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
             autoComplete="current-password"
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm"
+            className="input"
           />
         </label>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && <p className="alert-error">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded bg-indigo-600 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {submitting ? "Signing in..." : "Sign in"}
+        <button type="submit" disabled={submitting} className="btn-primary w-full">
+          {submitting ? "Signing in…" : "Sign in"}
         </button>
       </form>
     </div>

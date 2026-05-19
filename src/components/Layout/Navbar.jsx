@@ -2,19 +2,22 @@ import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
 
 const linkClass = ({ isActive }) =>
-  `text-sm font-medium ${isActive ? "text-indigo-600" : "text-slate-600 hover:text-slate-900"}`;
+  `nav-link ${isActive ? "nav-link-active" : ""}`;
 
 export default function Navbar() {
   const { user, logout, isAdmin } = useAuth();
 
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-3">
-        <Link to="/" className="text-lg font-bold text-indigo-600">
+    <header className="navbar">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
+        <Link
+          to="/"
+          className="text-xl font-bold tracking-tight text-indigo-600 transition hover:text-indigo-700"
+        >
           ShowUp
         </Link>
 
-        <nav className="flex items-center gap-5">
+        <nav className="flex items-center gap-6">
           <NavLink to="/" end className={linkClass}>
             Home
           </NavLink>
@@ -25,7 +28,7 @@ export default function Navbar() {
           )}
           {isAdmin && (
             <NavLink to="/admin" className={linkClass}>
-              Review Projects
+              Review
             </NavLink>
           )}
         </nav>
@@ -33,44 +36,36 @@ export default function Navbar() {
         <div className="flex items-center gap-3 text-sm">
           {user ? (
             <>
-              <span className="flex items-center gap-2 text-slate-600">
+              <span className="flex items-center gap-2.5 text-slate-600">
                 {user.avatar_url && (
                   <img
                     src={user.avatar_url}
                     alt=""
-                    className="h-7 w-7 rounded-full border border-slate-200"
+                    className="h-8 w-8 rounded-full border border-slate-200 object-cover shadow-sm"
                   />
                 )}
-                <span>
-                  {user.name}
+                <span className="hidden sm:inline">
+                  <span className="font-medium text-slate-800">{user.name}</span>
                   {user.github_login && (
-                    <span className="ml-1 text-slate-400">@{user.github_login}</span>
+                    <span className="ml-1 text-slate-400">
+                      @{user.github_login}
+                    </span>
                   )}
-                  <span className="ml-1 rounded bg-slate-100 px-1.5 py-0.5 text-xs">
+                  <span className="ml-1.5 rounded-md bg-slate-100 px-1.5 py-0.5 text-xs font-medium text-slate-600">
                     {user.role}
                   </span>
                 </span>
               </span>
-              <button
-                type="button"
-                onClick={logout}
-                className="rounded border border-slate-300 px-3 py-1 hover:bg-slate-50"
-              >
+              <button type="button" onClick={logout} className="btn-secondary btn-sm">
                 Logout
               </button>
             </>
           ) : (
             <>
-              <NavLink
-                to="/admin/login"
-                className="text-sm text-slate-600 hover:text-slate-900"
-              >
+              <NavLink to="/admin/login" className="nav-link">
                 Admin
               </NavLink>
-              <NavLink
-                to="/login"
-                className="rounded bg-indigo-600 px-3 py-1.5 font-medium text-white hover:bg-indigo-700"
-              >
+              <NavLink to="/login" className="btn-primary btn-sm">
                 Sign in
               </NavLink>
             </>

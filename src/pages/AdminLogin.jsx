@@ -17,16 +17,19 @@ export default function AdminLogin() {
   }
 
   return (
-    <main className="mx-auto max-w-lg px-4 py-8">
-      <h1 className="text-2xl font-bold text-slate-900">Admin sign in</h1>
-      <p className="mt-1 text-sm text-slate-600">
-        Sign in with your admin credentials to review projects.
-      </p>
+    <main className="page-narrow">
+      <header className="page-header">
+        <p className="page-eyebrow">Administration</p>
+        <h1 className="page-title">Admin sign in</h1>
+        <p className="page-lead">
+          Sign in with your admin credentials to review projects.
+        </p>
+      </header>
 
-      {loading && <p className="mt-6 text-slate-500">Loading...</p>}
+      {loading && <p className="mt-8 text-slate-500">Loading…</p>}
 
       {!loading && (
-        <div className="mt-6">
+        <div className="mt-8">
           <AdminLoginForm redirectTo={redirectTo} />
         </div>
       )}

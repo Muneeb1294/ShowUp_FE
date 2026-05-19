@@ -22,8 +22,8 @@ export default function AdminPendingRow({
   }
 
   return (
-    <tr className="border-b border-slate-100 align-top">
-      <td className="px-4 py-4">
+    <tr>
+      <td>
         <div className="flex items-start gap-3">
           <OwnerAvatar
             url={project.owner_avatar_url}
@@ -54,7 +54,7 @@ export default function AdminPendingRow({
             {topics.map((t) => (
               <span
                 key={t}
-                className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600"
+                className="tag"
               >
                 {t}
               </span>
@@ -62,10 +62,10 @@ export default function AdminPendingRow({
           </div>
         )}
       </td>
-      <td className="px-4 py-4 text-sm text-slate-600">
+      <td>
         {project.category_name || "—"}
       </td>
-      <td className="px-4 py-4 text-sm text-slate-600">
+      <td>
         <div>{project.language || "—"}</div>
         <div className="text-slate-400">★ {project.stars ?? 0}</div>
         {project.last_commit && (
@@ -74,7 +74,7 @@ export default function AdminPendingRow({
           </div>
         )}
       </td>
-      <td className="px-4 py-4 text-sm text-slate-600">
+      <td>
         {project.submitter_name ? (
           <div className="space-y-0.5">
             <div className="font-medium text-slate-800">{project.submitter_name}</div>
@@ -89,23 +89,19 @@ export default function AdminPendingRow({
           <span className="text-slate-400">Unknown</span>
         )}
       </td>
-      <td className="px-4 py-4 text-sm text-slate-600">
+      <td>
         {project.submitter_note || (
           <span className="text-slate-400">—</span>
         )}
       </td>
-      <td className="px-4 py-4">
+      <td>
         <span
-          className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${
-            isApproved
-              ? "bg-green-100 text-green-800"
-              : "bg-amber-100 text-amber-800"
-          }`}
+          className={isApproved ? "status-approved" : "status-pending"}
         >
           {project.status}
         </span>
       </td>
-      <td className="px-4 py-4">
+      <td>
         <div className="flex flex-col gap-2">
           {isPending && (
             <>
@@ -113,7 +109,7 @@ export default function AdminPendingRow({
                 type="button"
                 disabled={busy}
                 onClick={() => onApprove(project.id)}
-                className="rounded bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                className="btn-success btn-sm"
               >
                 Approve
               </button>
@@ -121,7 +117,7 @@ export default function AdminPendingRow({
                 type="button"
                 disabled={busy}
                 onClick={() => setShowReject((v) => !v)}
-                className="rounded bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-50"
+                className="btn-reject btn-sm"
               >
                 Reject
               </button>
@@ -150,13 +146,13 @@ export default function AdminPendingRow({
                 onChange={(e) => setRejectNote(e.target.value)}
                 rows={2}
                 placeholder="Rejection note (optional)"
-                className="w-full min-w-[140px] rounded border border-slate-300 px-2 py-1 text-xs"
+                className="textarea min-h-[4rem] text-xs"
               />
               <button
                 type="button"
                 disabled={busy}
                 onClick={confirmReject}
-                className="w-full rounded border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50 disabled:opacity-50"
+                className="btn-secondary btn-sm w-full !text-red-700"
               >
                 Confirm reject
               </button>

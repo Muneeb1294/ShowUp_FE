@@ -36,22 +36,27 @@ export default function AuthCallback() {
 
   if (error) {
     return (
-      <main className="mx-auto max-w-lg px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-900">Sign-in failed</h1>
-        <p className="mt-2 text-sm text-red-600">{error}</p>
+      <main className="page-narrow">
+        <header className="page-header">
+          <p className="page-eyebrow">Account</p>
+          <h1 className="page-title">Sign-in failed</h1>
+        </header>
+        <p role="alert" className="alert-error mt-6">
+          {error}
+        </p>
         <Link
           to="/login"
-          className="mt-4 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700"
+          className="mt-4 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-800"
         >
-          Back to sign in
+          ← Back to sign in
         </Link>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-lg px-4 py-8">
-      <p className="text-slate-600">Completing GitHub sign-in...</p>
+    <main className="page-narrow">
+      <p className="text-slate-600">Completing GitHub sign-in…</p>
     </main>
   );
 }

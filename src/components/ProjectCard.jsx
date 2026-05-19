@@ -92,15 +92,9 @@ export default function ProjectCard({
   }
 
   return (
-    <article
-      className={`group flex h-full flex-col rounded-xl border bg-white transition-shadow ${
-        featured
-          ? "border-indigo-200 shadow-md ring-1 ring-indigo-100"
-          : "border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md"
-      }`}
-    >
-      <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-start gap-3">
+    <article className={`card group ${featured ? "card-featured" : ""}`}>
+      <div className="card-body">
+        <div className="flex items-start gap-3.5">
           <OwnerAvatar
             url={project.owner_avatar_url}
             login={project.owner_login}
@@ -108,27 +102,23 @@ export default function ProjectCard({
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
-              <h3 className="min-w-0 text-base font-semibold leading-snug text-slate-900">
+              <h3 className="min-w-0 text-base font-semibold leading-snug text-slate-900 sm:text-[1.05rem]">
                 <a
                   href={project.github_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="hover:text-indigo-600"
+                  className="transition-colors hover:text-indigo-600"
                 >
                   {project.repo_name}
                 </a>
               </h3>
               {(project.is_featured || project.is_pinned) && (
-                <div className="flex shrink-0 gap-1">
+                <div className="flex shrink-0 flex-wrap justify-end gap-1">
                   {project.is_featured && (
-                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
-                      Featured
-                    </span>
+                    <span className="badge-featured">Featured</span>
                   )}
                   {project.is_pinned && user && (
-                    <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-indigo-700">
-                      Pinned
-                    </span>
+                    <span className="badge-pinned">Pinned</span>
                   )}
                 </div>
               )}
@@ -142,16 +132,16 @@ export default function ProjectCard({
         </div>
 
         {project.description ? (
-          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
+          <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-slate-600">
             {project.description}
           </p>
         ) : (
-          <p className="mt-3 text-sm text-slate-400">No description</p>
+          <p className="mt-4 text-sm italic text-slate-400">No description</p>
         )}
 
-        <ul className="mt-4 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+        <ul className="mt-4 flex flex-wrap items-center gap-2">
           {project.language && (
-            <li className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">
+            <li className="badge-muted">
               <span
                 className="h-2 w-2 rounded-full bg-indigo-400"
                 aria-hidden
@@ -159,29 +149,26 @@ export default function ProjectCard({
               {project.language}
             </li>
           )}
-          <li className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-700">
-            <span aria-hidden>★</span>
+          <li className="badge-muted">
+            <span aria-hidden className="text-amber-500">
+              ★
+            </span>
             {formatStars(project.stars)}
           </li>
           {project.category_name && (
-            <li className="rounded-full bg-slate-50 px-2.5 py-1 text-slate-600 ring-1 ring-slate-200/80">
-              {project.category_name}
-            </li>
+            <li className="badge-outline">{project.category_name}</li>
           )}
         </ul>
 
         {visibleTopics.length > 0 && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
+          <div className="mt-3.5 flex flex-wrap gap-1.5">
             {visibleTopics.map((topic) => (
-              <span
-                key={topic}
-                className="rounded-md bg-slate-50 px-2 py-0.5 text-xs text-slate-600 ring-1 ring-slate-200/60"
-              >
+              <span key={topic} className="tag">
                 {topic}
               </span>
             ))}
             {hiddenTopicCount > 0 && (
-              <span className="rounded-md px-2 py-0.5 text-xs text-slate-400">
+              <span className="px-2 py-0.5 text-xs text-slate-400">
                 +{hiddenTopicCount}
               </span>
             )}
@@ -189,24 +176,26 @@ export default function ProjectCard({
         )}
       </div>
 
-      <footer className="mt-auto border-t border-slate-100 px-5 py-3">
-        <div className="flex items-center justify-between gap-3">
+      <footer className="card-footer">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
             to={`/projects/${project.id}/comments`}
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+            className="text-sm font-semibold text-indigo-600 transition hover:text-indigo-800"
           >
-            {commentCount > 0 ? `${commentCount} comments` : "Comments"}
+            {commentCount > 0
+              ? `${commentCount} comment${commentCount === 1 ? "" : "s"}`
+              : "Leave a comment"}
           </Link>
 
           {showActions && (
-            <div className="flex items-center gap-1.5 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+            <div className="flex items-center gap-1">
               {user && (
                 <button
                   type="button"
                   onClick={handlePinToggle}
                   disabled={pinning || syncing || deleting}
                   title={project.is_pinned ? "Unpin" : "Pin for me"}
-                  className="rounded-md px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+                  className="btn-ghost btn-sm"
                 >
                   {pinning ? "…" : project.is_pinned ? "Unpin" : "Pin"}
                 </button>
@@ -217,7 +206,7 @@ export default function ProjectCard({
                     type="button"
                     onClick={handleSync}
                     disabled={syncing || deleting}
-                    className="rounded-md px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 disabled:opacity-50"
+                    className="btn-ghost btn-sm"
                   >
                     {syncing ? "…" : "Sync"}
                   </button>
@@ -225,7 +214,7 @@ export default function ProjectCard({
                     type="button"
                     onClick={handleDelete}
                     disabled={deleting || syncing}
-                    className="rounded-md px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                    className="btn-danger btn-sm"
                   >
                     {deleting ? "…" : "Delete"}
                   </button>
@@ -235,7 +224,7 @@ export default function ProjectCard({
           )}
         </div>
         {(pinError || syncError || deleteError) && (
-          <p className="mt-1.5 text-xs text-red-600">
+          <p className="mt-2 text-xs text-red-600">
             {pinError || syncError || deleteError}
           </p>
         )}

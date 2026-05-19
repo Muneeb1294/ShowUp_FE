@@ -10,9 +10,6 @@ import {
 } from "../api/comments.js";
 import OwnerAvatar from "../components/OwnerAvatar.jsx";
 
-const pageBtnClass =
-  "rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40";
-
 function buildPageNumbers(current, total) {
   if (total <= 7) {
     return Array.from({ length: total }, (_, i) => i + 1);
@@ -190,33 +187,39 @@ export default function ProjectCommentsPage() {
 
   if (loading && !project) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <p className="text-slate-500">Loading...</p>
+      <main className="page-medium">
+        <p className="text-slate-500">Loading…</p>
       </main>
     );
   }
 
   if (error && !project) {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-8">
-        <p role="alert" className="text-red-600">
+      <main className="page-medium">
+        <p role="alert" className="alert-error">
           {error}
         </p>
-        <Link to="/" className="mt-4 inline-block text-indigo-600 hover:underline">
-          Back to projects
+        <Link
+          to="/"
+          className="mt-4 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-800"
+        >
+          ← Back to projects
         </Link>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8">
-      <Link to="/" className="text-sm text-indigo-600 hover:underline">
+    <main className="page-medium">
+      <Link
+        to="/"
+        className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+      >
         ← Back to projects
       </Link>
 
       {project && (
-        <header className="mt-4 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+        <header className="panel-padded mt-6">
           <div className="flex items-start gap-3">
             <OwnerAvatar
               url={project.owner_avatar_url}
@@ -224,7 +227,7 @@ export default function ProjectCommentsPage() {
               size="md"
             />
             <div className="min-w-0">
-              <h1 className="text-xl font-bold text-slate-900">
+              <h1 className="text-xl font-bold tracking-tight text-slate-900">
                 <a
                   href={project.github_url}
                   target="_blank"
@@ -238,7 +241,9 @@ export default function ProjectCommentsPage() {
                 <p className="text-sm text-slate-500">@{project.owner_login}</p>
               )}
               {project.description && (
-                <p className="mt-2 text-sm text-slate-600">{project.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                  {project.description}
+                </p>
               )}
             </div>
           </div>
@@ -246,7 +251,7 @@ export default function ProjectCommentsPage() {
       )}
 
       <section className="mt-8" aria-labelledby="comments-heading">
-        <h2 id="comments-heading" className="text-lg font-semibold text-slate-900">
+        <h2 id="comments-heading" className="section-heading">
           Comments
           {project?.comment_count != null && (
             <span className="ml-2 text-base font-normal text-slate-500">
@@ -256,35 +261,39 @@ export default function ProjectCommentsPage() {
         </h2>
 
         {error && (
-          <p
-            role="alert"
-            className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-          >
+          <p role="alert" className="alert-error mt-4">
             {error}
           </p>
         )}
 
         {user ? (
-          <form onSubmit={handleSubmit} className="mt-4 space-y-2">
+          <form onSubmit={handleSubmit} className="panel-padded mt-4 space-y-3">
+            <label htmlFor="comment-body" className="field-label">
+              Add a comment
+            </label>
             <textarea
+              id="comment-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="Write a comment…"
-              rows={3}
+              placeholder="Share your thoughts about this project…"
+              rows={4}
               maxLength={2000}
-              className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="textarea"
             />
             <button
               type="submit"
               disabled={submitting || !body.trim()}
-              className="rounded bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="btn-primary"
             >
               {submitting ? "Posting…" : "Post comment"}
             </button>
           </form>
         ) : (
           <p className="mt-4 text-sm text-slate-600">
-            <Link to="/admin" className="text-indigo-600 hover:underline">
+            <Link
+              to="/login"
+              className="font-medium text-indigo-600 hover:text-indigo-800"
+            >
               Sign in
             </Link>{" "}
             to leave a comment.
@@ -294,7 +303,7 @@ export default function ProjectCommentsPage() {
         {loading && <p className="mt-6 text-slate-500">Loading comments...</p>}
 
         {!loading && comments.length === 0 && !error && (
-          <p className="mt-6 rounded-lg border border-dashed border-slate-200 bg-white p-8 text-center text-slate-500">
+          <p className="empty-state mt-6">
             No comments yet. Be the first to comment.
           </p>
         )}
@@ -304,14 +313,14 @@ export default function ProjectCommentsPage() {
             {comments.map((comment) => (
               <li
                 key={comment.id}
-                className="rounded-lg border border-slate-200 bg-white px-4 py-3 shadow-sm"
+                className="comment-card"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-slate-900">
                       {comment.author_name}
                     </p>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
+                    <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-700">
                       {comment.body}
                     </p>
                     <p className="mt-2 text-xs text-slate-400">
@@ -323,7 +332,7 @@ export default function ProjectCommentsPage() {
                       type="button"
                       disabled={deletingId === comment.id}
                       onClick={() => handleDelete(comment.id)}
-                      className="shrink-0 text-sm text-red-600 hover:underline disabled:opacity-50"
+                      className="btn-danger btn-sm shrink-0 disabled:opacity-50"
                     >
                       {deletingId === comment.id ? "Deleting…" : "Delete"}
                     </button>
@@ -336,7 +345,7 @@ export default function ProjectCommentsPage() {
 
         {!loading && totalComments > 0 && (
           <nav
-            className="mt-8 rounded-lg border border-slate-200 bg-white px-4 py-4"
+            className="panel-padded mt-8"
             aria-label="Comments pagination"
           >
             <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
@@ -356,7 +365,7 @@ export default function ProjectCommentsPage() {
                   type="button"
                   disabled={!hasPrevPage || loading}
                   onClick={() => goToPage(1)}
-                  className={pageBtnClass}
+                  className="btn-page"
                 >
                   First
                 </button>
@@ -364,7 +373,7 @@ export default function ProjectCommentsPage() {
                   type="button"
                   disabled={!hasPrevPage || loading}
                   onClick={() => goToPage(currentPage - 1)}
-                  className={pageBtnClass}
+                  className="btn-page"
                 >
                   Prev
                 </button>
@@ -384,10 +393,8 @@ export default function ProjectCommentsPage() {
                       disabled={loading}
                       onClick={() => goToPage(n)}
                       aria-current={n === currentPage ? "page" : undefined}
-                      className={`${pageBtnClass} min-w-[2.25rem] ${
-                        n === currentPage
-                          ? "border-indigo-600 bg-indigo-50 font-medium text-indigo-700"
-                          : ""
+                      className={`btn-page min-w-[2.25rem] ${
+                        n === currentPage ? "btn-page-active" : ""
                       }`}
                     >
                       {n}
@@ -398,7 +405,7 @@ export default function ProjectCommentsPage() {
                   type="button"
                   disabled={!hasNextPage || loading}
                   onClick={() => goToPage(currentPage + 1)}
-                  className={pageBtnClass}
+                  className="btn-page"
                 >
                   Next
                 </button>
@@ -406,7 +413,7 @@ export default function ProjectCommentsPage() {
                   type="button"
                   disabled={!hasNextPage || loading}
                   onClick={() => goToPage(totalPages)}
-                  className={pageBtnClass}
+                  className="btn-page"
                 >
                   Last
                 </button>

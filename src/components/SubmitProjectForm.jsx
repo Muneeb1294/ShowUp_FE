@@ -53,42 +53,36 @@ export default function SubmitProjectForm() {
   const disabled = submitting || categoriesLoading || !category;
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+    <div className="panel-padded">
       {success && (
-        <div
-          role="status"
-          className="mb-6 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-green-900"
-        >
-          <p className="font-medium">Submitted successfully</p>
-          <div className="mt-2 flex items-center gap-3">
+        <div role="status" className="alert-success mb-6">
+          <p className="font-semibold">Submitted successfully</p>
+          <div className="mt-3 flex items-center gap-3">
             <OwnerAvatar
               url={success.ownerAvatarUrl}
               login={success.ownerLogin}
               size="md"
             />
-            <p className="text-sm">
-              <strong>{success.repoName}</strong>
+            <p className="text-sm leading-relaxed">
+              <strong className="text-slate-900">{success.repoName}</strong>
               {success.ownerLogin && (
                 <span className="text-slate-600"> · @{success.ownerLogin}</span>
               )}
-              <span className="mt-0.5 block text-slate-600">{success.message}</span>
+              <span className="mt-1 block text-slate-600">{success.message}</span>
             </p>
           </div>
         </div>
       )}
 
       {error && (
-        <p
-          role="alert"
-          className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-        >
+        <p role="alert" className="alert-error mb-4">
           {error}
         </p>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <label className="block">
-          <span className="text-sm font-medium text-slate-700">GitHub URL</span>
+          <span className="field-label">GitHub URL</span>
           <input
             type="url"
             required
@@ -96,21 +90,21 @@ export default function SubmitProjectForm() {
             placeholder="https://github.com/owner/repo"
             value={githubUrl}
             onChange={(e) => setGithubUrl(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-50 disabled:text-slate-500"
+            className="input"
           />
         </label>
 
         <label className="block">
-          <span className="text-sm font-medium text-slate-700">Category</span>
+          <span className="field-label">Category</span>
           <select
             required
             disabled={disabled}
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-50 disabled:text-slate-500"
+            className="select"
           >
             {categoriesLoading && (
-              <option value="">Loading categories...</option>
+              <option value="">Loading categories…</option>
             )}
             {!categoriesLoading && categories.length === 0 && (
               <option value="">No categories available</option>
@@ -124,8 +118,8 @@ export default function SubmitProjectForm() {
         </label>
 
         <label className="block">
-          <span className="text-sm font-medium text-slate-700">
-            Note <span className="font-normal text-slate-400">(optional)</span>
+          <span className="field-label">
+            Note <span className="field-hint">(optional)</span>
           </span>
           <textarea
             disabled={disabled}
@@ -133,15 +127,11 @@ export default function SubmitProjectForm() {
             onChange={(e) => setNote(e.target.value)}
             rows={4}
             placeholder="Why should this project be featured?"
-            className="mt-1.5 w-full resize-y rounded-md border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-50 disabled:text-slate-500"
+            className="textarea"
           />
         </label>
 
-        <button
-          type="submit"
-          disabled={disabled}
-          className="flex w-full items-center justify-center gap-2 rounded-md bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
-        >
+        <button type="submit" disabled={disabled} className="btn-primary w-full">
           {submitting && (
             <span
               className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"
@@ -149,9 +139,9 @@ export default function SubmitProjectForm() {
             />
           )}
           {submitting
-            ? "Submitting..."
+            ? "Submitting…"
             : categoriesLoading
-              ? "Loading..."
+              ? "Loading…"
               : "Submit for review"}
         </button>
       </form>

@@ -6,16 +6,22 @@ export default function Submit() {
   const { user, loading } = useAuth();
 
   return (
-    <main className="mx-auto max-w-lg px-4 py-8">
-      <h1 className="text-2xl font-bold text-slate-900">Submit a project</h1>
-      <p className="mt-1 text-sm text-slate-600">
-        Share a public GitHub repository. We fetch its metadata and send it for admin approval.
-      </p>
+    <main className="page-narrow">
+      <header className="page-header">
+        <p className="page-eyebrow">Contribute</p>
+        <h1 className="page-title">Submit a project</h1>
+        <p className="page-lead">
+          Share a public GitHub repository. We fetch its metadata and send it for
+          admin approval.
+        </p>
+      </header>
 
-      {loading && <p className="mt-6 text-slate-500">Loading...</p>}
+      {loading && (
+        <p className="mt-8 text-slate-500">Loading…</p>
+      )}
 
       {!loading && !user && (
-        <div className="mt-6 max-w-sm">
+        <div className="mt-8">
           <p className="mb-4 text-slate-600">
             Sign in with GitHub to submit a project.
           </p>
@@ -24,7 +30,7 @@ export default function Submit() {
       )}
 
       {!loading && user && (
-        <div className="mt-6">
+        <div className="mt-8">
           <SubmitProjectForm />
         </div>
       )}

@@ -98,10 +98,7 @@ function AdminPendingPanel() {
   return (
     <div className="space-y-6">
       {error && (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-        >
+        <p role="alert" className="alert-error">
           {error}
         </p>
       )}
@@ -113,28 +110,26 @@ function AdminPendingPanel() {
         <button
           type="button"
           onClick={load}
-          className="text-sm text-indigo-600 hover:underline"
+          className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
         >
           Refresh
         </button>
       </div>
 
       {projects.length === 0 ? (
-        <p className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-500">
-          No pending projects.
-        </p>
+        <p className="empty-state">No pending projects.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-          <table className="w-full min-w-[960px] text-left">
-            <thead className="border-b border-slate-200 bg-slate-50 text-xs font-medium uppercase text-slate-500">
+        <div className="table-panel">
+          <table className="data-table min-w-[960px]">
+            <thead>
               <tr>
-                <th className="px-4 py-3">Project</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Meta</th>
-                <th className="px-4 py-3">Submitter</th>
-                <th className="px-4 py-3">Note</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Actions</th>
+                <th>Project</th>
+                <th>Category</th>
+                <th>Meta</th>
+                <th>Submitter</th>
+                <th>Note</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -240,10 +235,7 @@ function AdminHistoryPanel() {
   return (
     <div className="space-y-6">
       {error && (
-        <p
-          role="alert"
-          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-        >
+        <p role="alert" className="alert-error">
           {error}
         </p>
       )}
@@ -257,7 +249,7 @@ function AdminHistoryPanel() {
             id="history-status"
             value={statusFilter}
             onChange={(e) => handleFilterChange(e.target.value)}
-            className="rounded border border-slate-300 px-2 py-1 text-sm"
+            className="select w-auto min-w-[10rem]"
           >
             <option value="">All decisions</option>
             <option value="approved">Approved</option>
@@ -267,7 +259,7 @@ function AdminHistoryPanel() {
         <button
           type="button"
           onClick={() => load(page, statusFilter)}
-          className="text-sm text-indigo-600 hover:underline"
+          className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
         >
           Refresh
         </button>
@@ -279,20 +271,18 @@ function AdminHistoryPanel() {
       </p>
 
       {projects.length === 0 ? (
-        <p className="rounded-lg border border-slate-200 bg-white p-8 text-center text-slate-500">
-          No reviewed projects yet.
-        </p>
+        <p className="empty-state">No reviewed projects yet.</p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white shadow-sm">
-          <table className="w-full min-w-[800px] text-left">
-            <thead className="border-b border-slate-200 bg-slate-50 text-xs font-medium uppercase text-slate-500">
+        <div className="table-panel">
+          <table className="data-table min-w-[800px]">
+            <thead>
               <tr>
-                <th className="px-4 py-3">Project</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Submitter</th>
-                <th className="px-4 py-3">Decision</th>
-                <th className="px-4 py-3">Reason</th>
-                <th className="px-4 py-3">Actions</th>
+                <th>Project</th>
+                <th>Category</th>
+                <th>Submitter</th>
+                <th>Decision</th>
+                <th>Reason</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -316,7 +306,7 @@ function AdminHistoryPanel() {
             type="button"
             disabled={!pagination.hasPrevPage || loading}
             onClick={() => setPage((p) => p - 1)}
-            className="rounded border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
+            className="btn-page disabled:opacity-50"
           >
             Previous
           </button>
@@ -327,7 +317,7 @@ function AdminHistoryPanel() {
             type="button"
             disabled={!pagination.hasNextPage || loading}
             onClick={() => setPage((p) => p + 1)}
-            className="rounded border border-slate-300 px-3 py-1 text-sm disabled:opacity-50"
+            className="btn-page disabled:opacity-50"
           >
             Next
           </button>
@@ -342,17 +332,13 @@ function AdminPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-1 rounded-lg border border-slate-200 bg-slate-100 p-1">
+      <div className="tab-list">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
             type="button"
             onClick={() => setTab(id)}
-            className={`flex-1 rounded-md px-4 py-2 text-sm font-medium transition ${
-              tab === id
-                ? "bg-white text-slate-900 shadow-sm"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
+            className={`tab ${tab === id ? "tab-active" : ""}`}
           >
             {label}
           </button>
@@ -368,12 +354,15 @@ export default function Admin() {
   const { user, loading } = useAuth();
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-slate-900">Review Projects</h1>
-      <p className="mt-1 text-sm text-slate-600">
-        Review submissions, approve or reject with a reason, and browse past
-        decisions.
-      </p>
+    <main className="page">
+      <header className="page-header">
+        <p className="page-eyebrow">Administration</p>
+        <h1 className="page-title">Review projects</h1>
+        <p className="page-lead">
+          Review submissions, approve or reject with a reason, and browse past
+          decisions.
+        </p>
+      </header>
 
       {loading && <p className="mt-4 text-slate-500">Loading...</p>}
 
@@ -383,7 +372,7 @@ export default function Admin() {
 
       {!loading && user && (
         <AdminRoute>
-          <div className="mt-6">
+          <div className="mt-8">
             <AdminPanel />
           </div>
         </AdminRoute>

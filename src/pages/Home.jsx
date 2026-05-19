@@ -16,12 +16,6 @@ const SORT_OPTIONS = [
   { value: "language", label: "Language" },
 ];
 
-const inputClass =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
-
-const pageBtnClass =
-  "rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40";
-
 function buildPageNumbers(current, total) {
   if (total <= 7) {
     return Array.from({ length: total }, (_, i) => i + 1);
@@ -42,12 +36,10 @@ function buildPageNumbers(current, total) {
 function SectionHeading({ id, title, count }) {
   return (
     <div className="flex items-baseline gap-2">
-      <h2 id={id} className="text-lg font-semibold tracking-tight text-slate-900">
+      <h2 id={id} className="section-heading">
         {title}
       </h2>
-      {count != null && (
-        <span className="text-sm text-slate-400">{count}</span>
-      )}
+      {count != null && <span className="section-count">{count}</span>}
     </div>
   );
 }
@@ -220,62 +212,65 @@ export default function Home() {
   const showFeatured = page === 1 && !search && featured.length > 0;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <header className="max-w-2xl">
-        <p className="text-sm font-medium uppercase tracking-wider text-indigo-600">
-          Community catalog
-        </p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-          Discover open-source projects
-        </h1>
-        <p className="mt-2 text-slate-600">
-          Browse approved repos, filter by category, and pin favorites for quick access.
+    <main className="page">
+      <header className="page-header">
+        <p className="page-eyebrow">Community catalog</p>
+        <h1 className="page-title">Discover open-source projects</h1>
+        <p className="page-lead">
+          Browse approved repos, filter by category, and pin favorites for quick
+          access.
         </p>
       </header>
 
-      <div className="mt-8 rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto]">
-          <input
-            type="search"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search repos, languages, topics…"
-            aria-label="Search projects"
-            className={inputClass}
-          />
-          <select
-            value={category}
-            onChange={(e) => setCategory(resetFilters(e.target.value))}
-            aria-label="Category"
-            className={inputClass}
-          >
-            <option value="">All categories</option>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-          <select
-            value={sort}
-            onChange={(e) => setSort(resetFilters(e.target.value))}
-            aria-label="Sort by"
-            className={inputClass}
-          >
-            {SORT_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+      <div className="filter-bar mt-8">
+        <div className="filter-grid">
+          <div className="filter-field sm:col-span-2 lg:col-span-1">
+            <label htmlFor="home-search">Search</label>
+            <input
+              id="home-search"
+              type="search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Repos, languages, topics…"
+              className="input"
+            />
+          </div>
+          <div className="filter-field">
+            <label htmlFor="home-category">Category</label>
+            <select
+              id="home-category"
+              value={category}
+              onChange={(e) => setCategory(resetFilters(e.target.value))}
+              className="select"
+            >
+              <option value="">All categories</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-field">
+            <label htmlFor="home-sort">Sort by</label>
+            <select
+              id="home-sort"
+              value={sort}
+              onChange={(e) => setSort(resetFilters(e.target.value))}
+              className="select"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {error && (
-        <p
-          role="alert"
-          className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-        >
+        <p role="alert" className="alert-error mt-6">
           {error}
         </p>
       )}
@@ -335,7 +330,7 @@ export default function Home() {
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <div
                 key={n}
-                className="h-52 animate-pulse rounded-xl border border-slate-200 bg-white"
+                className="skeleton-card"
                 aria-hidden
               />
             ))}
@@ -343,7 +338,7 @@ export default function Home() {
         )}
 
         {!loading && !error && totalProjects === 0 && (
-          <p className="mt-8 rounded-xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center text-slate-500">
+          <p className="empty-state mt-8">
             No projects match your search or filters.
           </p>
         )}
@@ -377,7 +372,7 @@ export default function Home() {
               type="button"
               disabled={!hasPrevPage}
               onClick={() => setPage((p) => p - 1)}
-              className={pageBtnClass}
+              className="btn-page"
               aria-label="Previous page"
             >
               Previous
@@ -399,10 +394,8 @@ export default function Home() {
                   onClick={() => setPage(n)}
                   aria-label={`Page ${n}`}
                   aria-current={n === currentPage ? "page" : undefined}
-                  className={`${pageBtnClass} min-w-[2.25rem] ${
-                    n === currentPage
-                      ? "border-indigo-600 bg-indigo-600 font-medium text-white hover:bg-indigo-700"
-                      : ""
+                  className={`btn-page min-w-[2.25rem] ${
+                    n === currentPage ? "btn-page-active" : ""
                   }`}
                 >
                   {n}
@@ -414,7 +407,7 @@ export default function Home() {
               type="button"
               disabled={!hasNextPage}
               onClick={() => setPage((p) => p + 1)}
-              className={pageBtnClass}
+              className="btn-page"
               aria-label="Next page"
             >
               Next
