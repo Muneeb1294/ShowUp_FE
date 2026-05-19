@@ -5,7 +5,12 @@ function formatDate(value) {
   return new Date(value).toLocaleString();
 }
 
-export default function AdminHistoryRow({ project, busy, onDelete }) {
+export default function AdminHistoryRow({
+  project,
+  busy,
+  onDelete,
+  onToggleFeature,
+}) {
   const isApproved = project.status === "approved";
   const reviewedAt = project.reviewed_at || project.created_at;
   const topics = project.topics?.length ? project.topics : [];
@@ -99,14 +104,30 @@ export default function AdminHistoryRow({ project, busy, onDelete }) {
         )}
       </td>
       <td className="px-4 py-4">
-        <button
-          type="button"
-          disabled={busy}
-          onClick={handleDelete}
-          className="rounded border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
-        >
-          Delete
-        </button>
+        <div className="flex flex-col gap-2">
+          {isApproved && (
+            <label className="flex cursor-pointer items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={!!project.is_featured}
+                disabled={busy}
+                onChange={() =>
+                  onToggleFeature(project.id, !project.is_featured)
+                }
+                className="h-4 w-4 rounded border-slate-300"
+              />
+              <span className="text-slate-700">Featured</span>
+            </label>
+          )}
+          <button
+            type="button"
+            disabled={busy}
+            onClick={handleDelete}
+            className="rounded border border-red-300 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
+          >
+            Delete
+          </button>
+        </div>
       </td>
     </tr>
   );

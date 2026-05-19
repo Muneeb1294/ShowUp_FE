@@ -216,6 +216,23 @@ function AdminHistoryPanel() {
     }
   }
 
+  async function handleToggleFeature(id, featured) {
+    setActionId(id);
+    setError("");
+    try {
+      const project = await setProjectFeatured(id, featured);
+      setProjects((list) =>
+        list.map((p) =>
+          p.id === id ? { ...p, is_featured: project.is_featured } : p,
+        ),
+      );
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setActionId(null);
+    }
+  }
+
   if (loading && projects.length === 0) {
     return <p className="text-slate-500">Loading review history...</p>;
   }
@@ -285,6 +302,7 @@ function AdminHistoryPanel() {
                   project={project}
                   busy={actionId === project.id}
                   onDelete={handleDelete}
+                  onToggleFeature={handleToggleFeature}
                 />
               ))}
             </tbody>
