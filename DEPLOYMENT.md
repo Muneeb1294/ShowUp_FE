@@ -10,15 +10,22 @@ Repo: **ShowUp_FE** — React + Vite app at repo root.
    - Output: `dist`
 3. No root subdirectory — project files are at repo root.
 
-## Environment
+## Environment (required on Vercel)
 
-| Variable | Value |
-|----------|--------|
-| `VITE_API_URL` | `https://showupbe-production.up.railway.app` |
+Vite inlines `VITE_*` variables **at build time**. If `VITE_API_URL` is missing, the deployed app cannot load data.
+
+1. Vercel → your project → **Settings** → **Environment Variables**
+2. Add:
+
+| Name | Value | Environments |
+|------|--------|----------------|
+| `VITE_API_URL` | `https://showupbe-production.up.railway.app` | Production, Preview, Development |
+
+3. **Deployments** → latest deployment → **⋯** → **Redeploy** (must rebuild after adding the variable)
 
 Deployed app: https://show-up-fe.vercel.app
 
-Redeploy after changing `VITE_API_URL` (inlined at build time).
+To verify a build embedded the URL, search the built JS for `showupbe-production` (it should appear; if you only see `VITE_API_URL is required`, the variable was not set during build).
 
 `vercel.json` rewrites routes to `index.html` for React Router.
 
