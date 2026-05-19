@@ -31,6 +31,14 @@ export async function fetchPendingProjects(page = 1) {
   return data;
 }
 
+export async function fetchReviewedProjects({ page = 1, status } = {}) {
+  const params = { page };
+  if (status) params.status = status;
+  const { data } = await api.get("/api/v1/projects/reviewed", { params });
+  if (!data.success) throw new Error(data.message || "Failed to load history");
+  return data;
+}
+
 export async function submitProject({ githubUrl, category, note }) {
   const { data } = await api.post("/api/v1/projects", {
     githubUrl,
