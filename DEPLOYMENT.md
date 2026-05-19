@@ -12,9 +12,11 @@ Repo: **ShowUp_FE** — React + Vite app at repo root.
 
 ## How production connects to Railway
 
-`vercel.json` proxies browser requests from `https://show-up-fe.vercel.app/api/*` to `https://showupbe-production.up.railway.app/api/*`. The app uses same-origin `/api/...` URLs, so **no CORS issues** and **no `VITE_API_URL` required on Vercel**.
+`.env.production` (committed) sets `VITE_API_URL=https://showupbe-production.up.railway.app`. Vite inlines it at build time, so the browser calls **Railway directly** (not `your-app.vercel.app/api/...`).
 
-If you change the Railway domain, update the `destination` in `vercel.json` and redeploy.
+If you change the Railway domain, update `.env.production` and redeploy.
+
+Railway must allow your Vercel origins in CORS (`FRONTEND_URL` plus `show-up-*.vercel.app` previews).
 
 ## Local development
 
@@ -24,7 +26,16 @@ Copy `.env.example` to `.env`:
 VITE_API_URL=http://localhost:4000
 ```
 
-Deployed app: https://show-up-fe.vercel.app
+**Production URL (use this):** https://show-up-fe.vercel.app
+
+### Preview URLs (`show-up-xxxxx-…vercel.app`)
+
+Vercel **Deployment Protection** often blocks preview URLs with an “Authentication Required” HTML page — including `/api/*`. That is not a backend bug.
+
+- **Option A:** Use https://show-up-fe.vercel.app for testing.
+- **Option B:** Vercel → Project → **Settings** → **Deployment Protection** → disable for Preview, or allow your team to access previews without the auth wall.
+
+Test the API proxy: open `https://show-up-fe.vercel.app/api/v1/categories` — you should see JSON, not HTML.
 
 ## Optional: direct API URL on Vercel
 
