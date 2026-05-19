@@ -285,6 +285,28 @@
     @apply h-56 animate-pulse rounded-2xl border border-slate-200 bg-white;
   }
 
+  /* Pagination */
+  .pagination-bar {
+    @apply rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5;
+  }
+
+  /* Home */
+  .home-hero {
+    @apply relative overflow-hidden rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/90 via-white to-white p-6 shadow-sm sm:p-8;
+  }
+
+  .home-featured {
+    @apply rounded-2xl border border-amber-200/70 bg-gradient-to-b from-amber-50/60 to-white p-5 shadow-sm sm:p-6;
+  }
+
+  .home-section {
+    @apply mt-12 scroll-mt-24;
+  }
+
+  .filter-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-800 ring-1 ring-indigo-200/60;
+  }
+
   /* Status pills */
   .status-pending {
     @apply inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-800 ring-1 ring-amber-200/60;

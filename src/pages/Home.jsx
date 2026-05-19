@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import ProjectCard from "../components/ProjectCard.jsx";
+import PaginationBar, { buildPageNumbers } from "../components/PaginationBar.jsx";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
   fetchProjects,
@@ -16,30 +18,18 @@ const SORT_OPTIONS = [
   { value: "language", label: "Language" },
 ];
 
-function buildPageNumbers(current, total) {
-  if (total <= 7) {
-    return Array.from({ length: total }, (_, i) => i + 1);
-  }
-  const pages = new Set([1, total, current]);
-  for (let i = current - 1; i <= current + 1; i += 1) {
-    if (i >= 1 && i <= total) pages.add(i);
-  }
-  const sorted = [...pages].sort((a, b) => a - b);
-  const result = [];
-  for (let i = 0; i < sorted.length; i += 1) {
-    if (i > 0 && sorted[i] - sorted[i - 1] > 1) result.push("…");
-    result.push(sorted[i]);
-  }
-  return result;
-}
-
-function SectionHeading({ id, title, count }) {
+function SectionHeading({ id, title, count, description }) {
   return (
-    <div className="flex items-baseline gap-2">
-      <h2 id={id} className="section-heading">
-        {title}
-      </h2>
-      {count != null && <span className="section-count">{count}</span>}
+    <div>
+      <div className="flex items-baseline gap-2">
+        <h2 id={id} className="section-heading">
+          {title}
+        </h2>
+        {count != null && <span className="section-count">{count}</span>}
+      </div>
+      {description && (
+        <p className="mt-1 text-sm text-slate-500">{description}</p>
+      )}
     </div>
   );
 }
@@ -65,6 +55,7 @@ export default function Home() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const projectsSectionRef = useRef(null);
 
   useEffect(() => {
     fetchCategories().then(setCategories).catch(() => {});
@@ -113,15 +104,8 @@ export default function Home() {
         ]);
         if (cancelled) return;
 
-        const topFeatured = featuredList.slice(0, 3);
-        const featuredIds = new Set(topFeatured.map((p) => p.id));
-
-        setFeatured(topFeatured);
-        setProjects(
-          page === 1
-            ? list.projects.filter((p) => !featuredIds.has(p.id))
-            : list.projects
-        );
+        setFeatured(featuredList.slice(0, 3));
+        setProjects(list.projects);
         const nextPage = list.currentPage ?? page;
         setPagination({
           totalProjects: list.totalProjects ?? 0,
@@ -161,16 +145,36 @@ export default function Home() {
     [currentPage, totalPages],
   );
 
-  const rangeLabel = useMemo(() => {
-    if (totalProjects === 0) return "";
-    const from = (currentPage - 1) * pageSize + 1;
-    const to = Math.min(currentPage * pageSize, totalProjects);
-    return `${from}–${to} of ${totalProjects}`;
-  }, [currentPage, pageSize, totalProjects]);
+  const categoryName = useMemo(
+    () => categories.find((c) => c.id === category)?.name,
+    [categories, category],
+  );
+
+  const sortLabel = useMemo(
+    () => SORT_OPTIONS.find((o) => o.value === sort)?.label ?? sort,
+    [sort],
+  );
+
+  const hasActiveFilters = Boolean(search || category);
 
   function resetFilters(next) {
     setPage(1);
     return next;
+  }
+
+  function clearFilters() {
+    setSearchInput("");
+    setSearch("");
+    setCategory("");
+    setPage(1);
+  }
+
+  function goToPage(nextPage) {
+    setPage(nextPage);
+    projectsSectionRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }
 
   function handleSynced(updated) {
@@ -213,13 +217,25 @@ export default function Home() {
 
   return (
     <main className="page">
-      <header className="page-header">
+      <header className="home-hero">
         <p className="page-eyebrow">Community catalog</p>
         <h1 className="page-title">Discover open-source projects</h1>
-        <p className="page-lead">
+        <p className="page-lead max-w-xl">
           Browse approved repos, filter by category, and pin favorites for quick
           access.
         </p>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          {!loading && totalProjects > 0 && (
+            <span className="filter-chip">
+              {totalProjects} project{totalProjects === 1 ? "" : "s"} in catalog
+            </span>
+          )}
+          {user && (
+            <Link to="/submit" className="btn-primary btn-sm">
+              Submit a project
+            </Link>
+          )}
+        </div>
       </header>
 
       <div className="filter-bar mt-8">
@@ -267,6 +283,25 @@ export default function Home() {
             </select>
           </div>
         </div>
+        {hasActiveFilters && (
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-4">
+            <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
+              Active filters
+            </span>
+            {search && <span className="filter-chip">Search: {search}</span>}
+            {categoryName && (
+              <span className="filter-chip">Category: {categoryName}</span>
+            )}
+            <span className="filter-chip">Sort: {sortLabel}</span>
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
+            >
+              Clear all
+            </button>
+          </div>
+        )}
       </div>
 
       {error && (
@@ -276,8 +311,13 @@ export default function Home() {
       )}
 
       {showPins && (
-        <section className="mt-12" aria-labelledby="my-pins-heading">
-          <SectionHeading id="my-pins-heading" title="My pins" count={pinsToShow.length} />
+        <section className="home-section" aria-labelledby="my-pins-heading">
+          <SectionHeading
+            id="my-pins-heading"
+            title="My pins"
+            count={pinsToShow.length}
+            description="Projects you've saved for quick access."
+          />
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {pinsToShow.map((p) => (
               <ProjectCard
@@ -293,8 +333,16 @@ export default function Home() {
       )}
 
       {showFeatured && (
-        <section className="mt-12" aria-labelledby="featured-heading">
-          <SectionHeading id="featured-heading" title="Featured" />
+        <section
+          className="home-section home-featured"
+          aria-labelledby="featured-heading"
+        >
+          <SectionHeading
+            id="featured-heading"
+            title="Featured picks"
+            count={featured.length}
+            description="Highlighted by admins — also listed below with the full catalog."
+          />
           <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
             {featured.map((p) => (
               <ProjectCard
@@ -311,28 +359,25 @@ export default function Home() {
       )}
 
       <section
-        className={showPins || showFeatured ? "mt-12" : "mt-10"}
+        ref={projectsSectionRef}
+        className={`home-section ${showPins || showFeatured ? "" : "mt-10"}`}
         aria-labelledby="all-heading"
       >
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <SectionHeading
-            id="all-heading"
-            title={search ? "Search results" : "All projects"}
-            count={!loading && totalProjects > 0 ? totalProjects : null}
-          />
-          {!loading && totalProjects > 0 && (
-            <p className="text-sm text-slate-500">{rangeLabel}</p>
-          )}
-        </div>
+        <SectionHeading
+          id="all-heading"
+          title={search ? "Search results" : "All projects"}
+          count={!loading && totalProjects > 0 ? totalProjects : null}
+          description={
+            showFeatured
+              ? "Full paginated list including featured projects."
+              : undefined
+          }
+        />
 
         {loading && (
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div
-                key={n}
-                className="skeleton-card"
-                aria-hidden
-              />
+              <div key={n} className="skeleton-card" aria-hidden />
             ))}
           </div>
         )}
@@ -343,18 +388,13 @@ export default function Home() {
           </p>
         )}
 
-        {!loading && totalProjects > 0 && projects.length === 0 && (
-          <p className="mt-8 text-center text-sm text-slate-500">
-            Featured projects are listed above. Go to the next page for more.
-          </p>
-        )}
-
         {!loading && projects.length > 0 && (
           <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {projects.map((p) => (
               <ProjectCard
                 key={p.id}
                 project={p}
+                featured={p.is_featured}
                 onSynced={handleSynced}
                 onPinnedChange={handlePinnedChange}
                 onDeleted={handleDeleted}
@@ -363,56 +403,19 @@ export default function Home() {
           </div>
         )}
 
-        {!loading && totalPages > 1 && (
-          <nav
-            className="mt-10 flex flex-wrap items-center justify-center gap-1"
-            aria-label="Pagination"
-          >
-            <button
-              type="button"
-              disabled={!hasPrevPage}
-              onClick={() => setPage((p) => p - 1)}
-              className="btn-page"
-              aria-label="Previous page"
-            >
-              Previous
-            </button>
-
-            {pageNumbers.map((n, i) =>
-              n === "…" ? (
-                <span
-                  key={`ellipsis-${i}`}
-                  className="px-2 text-sm text-slate-400"
-                  aria-hidden
-                >
-                  …
-                </span>
-              ) : (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setPage(n)}
-                  aria-label={`Page ${n}`}
-                  aria-current={n === currentPage ? "page" : undefined}
-                  className={`btn-page min-w-[2.25rem] ${
-                    n === currentPage ? "btn-page-active" : ""
-                  }`}
-                >
-                  {n}
-                </button>
-              ),
-            )}
-
-            <button
-              type="button"
-              disabled={!hasNextPage}
-              onClick={() => setPage((p) => p + 1)}
-              className="btn-page"
-              aria-label="Next page"
-            >
-              Next
-            </button>
-          </nav>
+        {!loading && totalProjects > 0 && (
+          <PaginationBar
+            totalItems={totalProjects}
+            itemLabel="projects"
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            hasNextPage={hasNextPage}
+            hasPrevPage={hasPrevPage}
+            pageNumbers={pageNumbers}
+            onPageChange={goToPage}
+            loading={loading}
+          />
         )}
       </section>
     </main>
