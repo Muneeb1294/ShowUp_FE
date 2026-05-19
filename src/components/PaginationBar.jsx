@@ -15,6 +15,12 @@ export function buildPageNumbers(current, total) {
   return result;
 }
 
+const pageBtnBase =
+  "inline-flex min-h-9 shrink-0 items-center justify-center rounded-lg border-2 border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none";
+
+const pageBtnActive =
+  "border-indigo-600 bg-indigo-600 text-white hover:border-indigo-700 hover:bg-indigo-700 hover:text-white";
+
 export default function PaginationBar({
   totalItems,
   itemLabel = "projects",
@@ -32,44 +38,51 @@ export default function PaginationBar({
   const from = (currentPage - 1) * pageSize + 1;
   const to = Math.min(currentPage * pageSize, totalItems);
   const rangeLabel = `Showing ${from}–${to} of ${totalItems}`;
+  const label = totalItems === 1 ? itemLabel.replace(/s$/, "") : itemLabel;
+  const showPageNumbers = totalPages > 1;
 
   return (
-    <nav className="pagination-bar" aria-label="Pagination">
-      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <div className="text-sm text-slate-600">
-          <p className="font-medium text-slate-900">
-            {totalItems} {totalItems === 1 ? itemLabel.replace(/s$/, "") : itemLabel}
+    <nav className="pagination-bar mt-8" aria-label="Pagination">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="text-sm text-slate-700">
+          <p className="font-semibold text-slate-900">
+            {totalItems} {label}
           </p>
           <p className="mt-0.5">{rangeLabel}</p>
-          <p className="mt-0.5 text-slate-500">
+          <p className="mt-0.5 text-slate-600">
             Page {currentPage} of {totalPages}
             {pageSize > 0 && ` · ${pageSize} per page`}
           </p>
         </div>
 
-        {totalPages > 1 && (
-          <div className="flex flex-wrap items-center gap-1">
-            <button
-              type="button"
-              disabled={!hasPrevPage || loading}
-              onClick={() => onPageChange(1)}
-              className="btn-page"
-            >
-              First
-            </button>
-            <button
-              type="button"
-              disabled={!hasPrevPage || loading}
-              onClick={() => onPageChange(currentPage - 1)}
-              className="btn-page"
-            >
-              Prev
-            </button>
-            {pageNumbers.map((n, i) =>
+        <div
+          className="pagination-controls"
+          role="group"
+          aria-label="Page navigation"
+        >
+          <button
+            type="button"
+            disabled={!hasPrevPage || loading}
+            onClick={() => onPageChange(1)}
+            className={pageBtnBase}
+          >
+            First
+          </button>
+          <button
+            type="button"
+            disabled={!hasPrevPage || loading}
+            onClick={() => onPageChange(currentPage - 1)}
+            className={pageBtnBase}
+          >
+            Prev
+          </button>
+
+          {showPageNumbers ? (
+            pageNumbers.map((n, i) =>
               n === "…" ? (
                 <span
                   key={`ellipsis-${i}`}
-                  className="px-2 text-sm text-slate-400"
+                  className="flex min-h-9 min-w-9 items-center justify-center px-1 text-sm font-medium text-slate-500"
                   aria-hidden
                 >
                   …
@@ -82,32 +95,38 @@ export default function PaginationBar({
                   onClick={() => onPageChange(n)}
                   aria-label={`Page ${n}`}
                   aria-current={n === currentPage ? "page" : undefined}
-                  className={`btn-page min-w-[2.25rem] ${
-                    n === currentPage ? "btn-page-active" : ""
-                  }`}
+                  className={`${pageBtnBase} min-w-9 ${n === currentPage ? pageBtnActive : ""}`}
                 >
                   {n}
                 </button>
               ),
-            )}
-            <button
-              type="button"
-              disabled={!hasNextPage || loading}
-              onClick={() => onPageChange(currentPage + 1)}
-              className="btn-page"
+            )
+          ) : (
+            <span
+              className={`${pageBtnBase} min-w-9 ${pageBtnActive}`}
+              aria-current="page"
             >
-              Next
-            </button>
-            <button
-              type="button"
-              disabled={!hasNextPage || loading}
-              onClick={() => onPageChange(totalPages)}
-              className="btn-page"
-            >
-              Last
-            </button>
-          </div>
-        )}
+              1
+            </span>
+          )}
+
+          <button
+            type="button"
+            disabled={!hasNextPage || loading}
+            onClick={() => onPageChange(currentPage + 1)}
+            className={pageBtnBase}
+          >
+            Next
+          </button>
+          <button
+            type="button"
+            disabled={!hasNextPage || loading}
+            onClick={() => onPageChange(totalPages)}
+            className={pageBtnBase}
+          >
+            Last
+          </button>
+        </div>
       </div>
     </nav>
   );

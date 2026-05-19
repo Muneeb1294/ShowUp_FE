@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ProjectCard from "../components/ProjectCard.jsx";
 import PaginationBar, { buildPageNumbers } from "../components/PaginationBar.jsx";
+import { normalizePagination } from "../lib/pagination.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
   fetchProjects,
@@ -105,18 +106,11 @@ export default function Home() {
         if (cancelled) return;
 
         setFeatured(featuredList.slice(0, 3));
-        setProjects(list.projects);
-        const nextPage = list.currentPage ?? page;
-        setPagination({
-          totalProjects: list.totalProjects ?? 0,
-          currentPage: nextPage,
-          totalPages: list.totalPages ?? 1,
-          pageSize: list.pageSize ?? 10,
-          hasNextPage: Boolean(list.hasNextPage),
-          hasPrevPage: Boolean(list.hasPrevPage),
-        });
-        if (nextPage !== page) {
-          setPage(nextPage);
+        setProjects(list.projects ?? []);
+        const meta = normalizePagination(list, page);
+        setPagination(meta);
+        if (meta.currentPage !== page) {
+          setPage(meta.currentPage);
         }
       } catch (err) {
         if (!cancelled) setError(getErrorMessage(err));
