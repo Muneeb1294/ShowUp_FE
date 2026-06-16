@@ -10,13 +10,13 @@ Repo: **ShowUp_FE** — React + Vite app at repo root.
    - Output: `dist`
 3. No root subdirectory — project files are at repo root.
 
-## How production connects to Railway
+## How production connects to the API
 
-`.env.production` (committed) sets `VITE_API_URL=https://showupbe-production.up.railway.app`. Vite inlines it at build time, so the browser calls **Railway directly** (not `your-app.vercel.app/api/...`).
+`.env.production` (committed) sets `VITE_API_URL=https://showupbe.vercel.app`. Vite inlines it at build time, so the browser calls the **Vercel backend** directly.
 
-If you change the Railway domain, update `.env.production` and redeploy.
+If you change the backend domain, update `.env.production` and redeploy the frontend.
 
-Railway must allow your Vercel origins in CORS (`FRONTEND_URL` plus `show-up-*.vercel.app` previews).
+The backend must allow your Vercel origins in CORS (`FRONTEND_URL` plus `show-up-*.vercel.app` previews).
 
 ## Local development
 
@@ -35,11 +35,11 @@ Vercel **Deployment Protection** often blocks preview URLs with an “Authentica
 - **Option A:** Use https://show-up-fe.vercel.app for testing.
 - **Option B:** Vercel → Project → **Settings** → **Deployment Protection** → disable for Preview, or allow your team to access previews without the auth wall.
 
-Test the API proxy: open `https://show-up-fe.vercel.app/api/v1/categories` — you should see JSON, not HTML.
+Test the API: open `https://showupbe.vercel.app/api/v1/categories` — you should see JSON.
 
-## Optional: direct API URL on Vercel
+## Optional: override API URL on Vercel
 
-Instead of the proxy, you can set `VITE_API_URL=https://showupbe-production.up.railway.app` in Vercel env vars and redeploy. Ensure Railway has `FRONTEND_URL=https://show-up-fe.vercel.app` for CORS.
+You can set `VITE_API_URL=https://showupbe.vercel.app` in Vercel env vars instead of relying on `.env.production`. Ensure the backend has `FRONTEND_URL=https://show-up-fe.vercel.app` for CORS.
 
 `vercel.json` rewrites routes to `index.html` for React Router.
 
